@@ -5,6 +5,7 @@ from filterpy.kalman import KalmanFilter
 from utils import IOU, convert_box, convert_to_bbox
 
 
+
 class KalmanTracker(object):
     """
         Kalman Tracker for object tracking implemented from the paper
@@ -12,12 +13,11 @@ class KalmanTracker(object):
         Xi Chen,Xiao WangandJianhua Xuan
     """
     count = 0
-
     def __init__(self, bbox):
          """
         Initialises a tracker using initial bounding box.
         """
-        # define constant velocity model
+        #define constant velocity model
         self.kf = KalmanFilter(dim_x=7, dim_z = 4)
         self.kf.F = np.array([[1,0,0,0,1,0,0],[0,1,0,0,0,1,0],[0,0,1,0,0,0,1],[0,0,0,1,0,0,0],  [0,0,0,0,1,0,0],[0,0,0,0,0,1,0],[0,0,0,0,0,0,1]])
         self.kf.H = np.array([[1,0,0,0,0,0,0],[0,1,0,0,0,0,0],[0,0,1,0,0,0,0],[0,0,0,1,0,0,0]])

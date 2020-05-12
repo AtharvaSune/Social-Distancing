@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def IOU(bb_test, bb_gt):
     """
         Compute IOU of two boxes
@@ -15,11 +14,10 @@ def IOU(bb_test, bb_gt):
     h = np.maximum(0, yy2 - yy1)
 
     # IOU = overlap_area / union_area
-    iou = w*h / ((bb_test[2]-bb_test[0])*(bb_test[3]-bb_test[1])
-                 + (bb_gt[2]-bb_gt[0])*(bb_gt[3]-bb_gt[1]) - w*h)
+    iou = w*h/ ((bb_test[2]-bb_test[0])*(bb_test[3]-bb_test[1])
+    + (bb_gt[2]-bb_gt[0])*(bb_gt[3]-bb_gt[1]) - w*h)
 
     return iou
-
 
 def convert_box(bbox):
     """
@@ -54,4 +52,5 @@ def convert_to_bbox(cvted):
     y1 = y+w/2
     x2 = x+w/2
     y2 = y-w/2
-    return np.array([x1, y1, x2, y2]).reshape((4, 1))
+    return np.array([x1, y1, x2, y2]).reshape((4,1))
+
