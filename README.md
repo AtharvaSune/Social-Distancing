@@ -10,6 +10,11 @@ MS COCO Dataset
 ## Tracking
 For tracking <b>SORT</b> (Simple Online and RealTime Tracking) is used. The paper for this algorithm is available in the papers folder
 
+## References
+For reference I looked at implementation by <a href="https://github.com/cfotache/pytorch_objectdetecttrack">cfotache</a>
+
+### Other details
+
 Dataset: 
   https://motchallenge.net/
   
