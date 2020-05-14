@@ -3,6 +3,13 @@ Social Distancing using Deep Learning
 
 Using Object Detection and tracking and calculating distance using pixel based implementation
 
+## Detection
+For object detection fasterrcnn with resnet 50 backbone is being used which is pretrained on 
+MS COCO Dataset
+
+## Tracking
+For tracking <b>SORT</b> (Simple Online and RealTime Tracking) is used. The paper for this algorithm is available in the papers folder
+
 Dataset: 
   https://motchallenge.net/
   

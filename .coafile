@@ -1,7 +1,6 @@
 [cli]
 default_actions = *: ApplyPatchAction
-bears = SpaceConsistencyBear
+bears = PyLintBear,SpaceConsistencyBear
 files = **/*.py
 use_spaces = True
-[python]
-bears = PEP8Bear
+
