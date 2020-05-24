@@ -42,7 +42,7 @@ def convert_box(bbox):
     return np.array([x, y, s, r]).reshape((4, 1))
 
 
-def convert_to_bbox(cvted):
+def convert_to_bbox(cvted, score=None):
     """
         Takes converted bbox in the form [x, y, s, r] and returns in
         format [x1, y1, x2, y2]
@@ -54,4 +54,46 @@ def convert_to_bbox(cvted):
     y1 = y+w/2
     x2 = x+w/2
     y2 = y-w/2
-    return np.array([x1, y1, x2, y2]).reshape((4, 1))
+    if score == None:
+        return np.array([x1, y1, x2, y2]).reshape((4, 1))
+    else:
+        return np.array([x1, y1, x2, y2, score]).reshape((5, 1))
+
+
+def assosciate_detections(detections, trackers, iou_thresh = 0.4):
+    """
+        Assosciates trackers to detections.
+
+    """
+    if len(trackers) == 0:
+        return np.empty((0,2),dtype=int), np.arange(len(detections)), np.empty((0,5),dtype=int)
+
+    iou_matrix = np.zeros((len(detections), len(trackers)))
+
+    # assignment cost matrix
+    for d, dtc in enumerate(detections):
+        for t, trk in enumerate(trackers):
+            iou_matrix[d, t] = IOU(dtc, trk)
+
+    matched_indices = linear_assignment(-iou_matrix)
+
+    unmatched_detections = [], unmatched_trackers = []
+    for d,_ in enumerate(detections):
+        if d not in matched_indices[:, 0]:
+            unmatched_detections.append(d)
+    for t,_ in enumerate(trackers):
+        if t not in matched_indices[:, 1]:
+            unmatched_trackers.append(t)
+
+    matched = []
+    for m in matched_indices:
+        if iou_matrix[m[0], m[1]] < iou_thresh:
+            unmatched_detections.append(m[0])
+            unmatched_trackers.append(m[1])
+        else:
+            matched.append(m.reshape(1, 2))
+
+    if len(matched) == 0:
+        matched = np.empty((0, 2), dtype=int)
+
+    return matched, np.array(unmatched_detections), np.array(unmatched_trackers)

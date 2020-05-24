@@ -41,19 +41,23 @@ if __name__ == "__main__":
 
             img = cv2.imread(args.path)
             img = cv2.resize(img, (1024, 1024))
-            preds = get_detections(Image.fromarray(img))
-            boxes = preds[0]["boxes"]
-            scores = preds[0]["scores"]
-            labels = [int(i) for i in preds[0]["labels"]]
+            preds = get_detections(Image.fromarray(img))[0]
+            print(preds)
+            boxes = preds["boxes"]
+            scores = preds["scores"]
+            labels = [int(i) for i in preds["labels"]]
 
             colors = {x: np.random.randint(0,256, (3,)) for x in set(labels)}
             for i, box in enumerate(boxes):
-                if scores[i] <= 0.5:
-                    continue
+                # if scores[i] <= 0.5:
+                #     continue
                 label = labels[i]
+                if label != 1:
+                    continue
                 color = [int(i) for i in colors[label]]
                 cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), color=color ,thickness=2)
-                cv2.imwrite("test.jpg", cv2.resize(img, (1000, 667)))
+                
+            cv2.imwrite("test2.jpg", cv2.resize(img, (1000, 667)))
 
         except EnvironmentError as e:
             print("Some error happened")
@@ -70,10 +74,10 @@ if __name__ == "__main__":
                     break
 
                 img = cv2.resize(img, (1024, 1024))
-                preds = get_detections(Image.fromarray(img))
-                boxes = preds[0]["boxes"]
-                scores = preds[0]["scores"]
-                labels = [int(i) for i in preds[0]["labels"]]
+                preds = get_detections(Image.fromarray(img))[0]
+                boxes = preds["boxes"]
+                scores = preds["scores"]
+                labels = [int(i) for i in preds["labels"]]
 
                 colors = {x: np.random.randint(0,256, (3,)) for x in set(labels)}
                 for i, box in enumerate(boxes):
