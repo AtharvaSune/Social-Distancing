@@ -1,5 +1,5 @@
 import numpy as np
-
+from sklearn.utils.linear_assignment_ import linear_assignment
 
 def IOU(bb_test, bb_gt):
     """
@@ -47,7 +47,7 @@ def convert_to_bbox(cvted, score=None):
         Takes converted bbox in the form [x, y, s, r] and returns in
         format [x1, y1, x2, y2]
     """
-    (x, y, s, r) = cvted
+    (x, y, s, r) = cvted[:4]
     w = np.sqrt(s*r)
     h = s/float(w)
     x1 = x-w/2
@@ -77,7 +77,8 @@ def assosciate_detections(detections, trackers, iou_thresh = 0.4):
 
     matched_indices = linear_assignment(-iou_matrix)
 
-    unmatched_detections = [], unmatched_trackers = []
+    unmatched_detections = []
+    unmatched_trackers = []
     for d,_ in enumerate(detections):
         if d not in matched_indices[:, 0]:
             unmatched_detections.append(d)

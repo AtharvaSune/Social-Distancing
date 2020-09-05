@@ -1,6 +1,7 @@
 import numpy as np
-from utils import IOU, convert_box, convert_to_bbox, assosciate_detections
-from kalman import KalmanBoxTracker
+from .track_utils import IOU, convert_box, convert_to_bbox, assosciate_detections
+from .kalman import KalmanBoxTracker
+
 
 class SORT(object):
     """
@@ -26,10 +27,10 @@ class SORT(object):
 
         # first update current trackers
         trks = np.zeros(shape=(len(self.trackers), 5))
-        to_del = [] # list of trackers that need to be deleted.
-        ret = [] # list to be returned
+        to_del = []  # list of trackers that need to be deleted.
+        ret = []  # list to be returned
         for t, trk in enumerate(trks):
-            pos = self.trackers[t].predict()[0]
+            pos = self.trackers[t].predict()
             trk[:] = [pos[0], pos[1], pos[2], pos[3], 0]
             # if update for any of the tracker gives nan then that tracker is added
             # to list of trackers that need to be deleted.
@@ -45,7 +46,7 @@ class SORT(object):
         # update trackers with matched detections
         for t, trk in enumerate(self.trackers):
             if t not in unmatched_trackers:
-                d = matched[np.where(matched[:,1]==t)[0], 0]
+                d = matched[np.where(matched[:, 1] == t)[0], 0]
                 trk.update(detections[d, :][0])
 
         # create trackers for unmatched detections
@@ -57,17 +58,16 @@ class SORT(object):
         # For all trackers
         for track in reversed(self.trackers):
             # get back the bounding box
-            d = track.get_state()[0]
+            d = track.get_state()
 
             # if they satisfy the required criteria add them to return list
             if((track.time_since_update < 1) and (track.hit_streak >= self.min_hits or self.frame_count <= self.min_hits)):
-                ret.append(np.concatenate((d, [track.id+1], [track.objclass])).reshape(1, -1))
+                ret.append(np.concatenate((d.reshape(-1,), [track.id+1], [track.objclass])).reshape(1, -1))
             i -= 1
 
             # else delete tracker
             if(track.time_since_update > self.max_age):
                 self.trackers.pop(i)
-
         if len(ret) > 0:
             return np.concatenate(ret)
         return np.empty((0, 5))
